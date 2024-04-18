@@ -1,33 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Transaction Data Viewer</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Font Awesome icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-4nUWolVB3wGXzO9vqMkOzMtQ5VV1pfLm/dhNt5ov/rKlXN3r+JZFn+aMKIGXQyIV84bX23ILgZK5GMBnWnHrCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    /* Adjust input box width */
+    #tx_hash {
+      width: calc(100% - 100px); /* Adjust width as needed */
+    }
+  </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Transaction Data Viewer</h1>
-    <div class="input-container">
-      <input type="text" id="tx_hash" placeholder="Enter transaction hash">
-      <button id="submit-btn"><i class="fas fa-search"></i> Get Data</button>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="input-group">
+          <input type="text" class="form-control" id="tx_hash" placeholder="Enter transaction hash" />
+          <div class="input-group-append">
+            <button id="submit-btn" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="data-container">
-      <table id="transaction-table">
-        <thead>
-          <tr>
-            <th>Field</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div id="data-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody id="transaction-table">
+              <!-- Table rows will be added dynamically here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
-  <script src="script.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const submitBtn = document.getElementById("submit-btn");
+
+      submitBtn.addEventListener("click", async () => {
+        const txHash = document.getElementById("tx_hash").value.trim();
+        if (!txHash) {
+          alert("Please enter a transaction hash.");
+          return;
+        }
+
+        const tableBody = document.getElementById("transaction-table");
+
+        try {
+          const response = await fetch("http://localhost:5000/get_data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tx_hash: txHash }),
+          });
+
+          const data = await response.json();
+          if (data.error) {
+            alert(data.error);
+            return;
+          }
+
+          // Clear previous data
+          tableBody.innerHTML = "";
+
+          // Add transaction hash row with copy button
+          const txHashRow = `
+            <tr>
+              <td>Transaction Hash</td>
+              <td>${txHash}</td>
+              <td><button class="btn btn-sm btn-info copy-button" data-value="${txHash}"><i class="far fa-copy"></i></button></td>
+            </tr>`;
+          tableBody.insertAdjacentHTML("beforeend", txHashRow);
+
+          // Process and display the retrieved data in the table
+          for (const [key, value] of Object.entries(data)) {
+            const row = `
+              <tr>
+                <td>${key}</td>
+                <td>${value}</td>
+                <td><button class="btn btn-sm btn-info copy-button" data-value="${value}"><i class="far fa-copy"></i></button></td>
+              </tr>`;
+            tableBody.insertAdjacentHTML("beforeend", row);
+          }
+
+          // Add event listeners to copy buttons
+          const copyButtons = document.querySelectorAll(".copy-button");
+          copyButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+              const valueToCopy = button.getAttribute("data-value");
+              navigator.clipboard
+                .writeText(valueToCopy)
+                .then(() => {
+                  // Display toast notification
+                  showNotification("Copied to clipboard");
+                })
+                .catch((err) => {
+                  console.error("Failed to copy:", err);
+                });
+            });
+          });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          alert("Failed to retrieve transaction data.");
+        }
+      });
+
+      function showNotification(message) {
+        const notification = document.createElement("div");
+        notification.classList.add("notification");
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+    });
+  </script>
 </body>
+
 </html>
