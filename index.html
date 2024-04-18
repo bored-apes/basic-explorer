@@ -5,15 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transaction Data Viewer</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-4nUWolVB3wGXzO9vqMkOzMtQ5VV1pfLm/dhNt5ov/rKlXN3r+JZFn+aMKIGXQyIV84bX23ILgZK5GMBnWnHrCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-  <h1>Transaction Data Viewer</h1>
-  <div id="input-container">
-    <label for="tx_hash">Transaction Hash:</label>
-    <input type="text" id="tx_hash" placeholder="Enter transaction hash">
-    <button id="submit-btn">Get Data</button>
+  <div class="container">
+    <h1>Transaction Data Viewer</h1>
+    <div class="input-container">
+      <input type="text" id="tx_hash" placeholder="Enter transaction hash">
+      <button id="submit-btn"><i class="fas fa-search"></i> Get Data</button>
+    </div>
+    <div id="data-container">
+      <table id="transaction-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div id="data-container"></div>
   <script src="script.js"></script>
 </body>
 </html>

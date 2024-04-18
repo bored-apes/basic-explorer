@@ -1,38 +1,106 @@
-
 body {
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
   }
   
   h1 {
     text-align: center;
+    margin-bottom: 20px;
   }
   
-  #input-container {
+  .input-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    margin-top: 20px;
+    align-items: center; /* Center items vertically */
+    margin-bottom: 20px;
   }
   
-  #input-container label {
-    margin-right: 10px;
+  .input-container input[type="text"],
+  .input-container button {
+    height: 40px; /* Set height of input box and button */
+    box-sizing: border-box; /* Include padding and border in height calculation */
+  }
+  
+  .input-container input[type="text"] {
+    flex: 1;
+    width: 100%;
+    max-width: 300px;
+    margin-right: 10px; /* Add margin between input and button */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .input-container button {
+    flex: 0 0 auto;
+    max-width: 150px;
+    padding: 0 20px; /* Adjust padding to center content */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .input-container button i {
+    margin-right: 5px; /* Add spacing between icon and text */
+  }
+  
+  .input-container button:hover {
+    background-color: #0056b3;
   }
   
   #data-container {
     margin-top: 20px;
   }
   
-  table {
-    border-collapse: collapse;
+  #transaction-table {
     width: 100%;
+    border-collapse: collapse;
   }
   
-  th, td {
-    padding: 8px;
+  #transaction-table th, #transaction-table td {
     border: 1px solid #ddd;
+    padding: 8px;
   }
   
-  th {
-    text-align: left;
+  #transaction-table th {
     background-color: #f2f2f2;
+    text-align: left;
+  }
+  
+  .copy-button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 9999;
+}
+
+  .copy-button:hover {
+    background-color: #0056b3;
   }
   
