@@ -1,1 +1,38 @@
 
+body {
+    font-family: sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  #input-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  #input-container label {
+    margin-right: 10px;
+  }
+  
+  #data-container {
+    margin-top: 20px;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    text-align: left;
+    background-color: #f2f2f2;
+  }
+  
