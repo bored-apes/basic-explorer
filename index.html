@@ -117,7 +117,7 @@
       // Function to fetch latest block number from Python API
       async function fetchLatestBlockNumber() {
         try {
-          const response = await fetch("http://localhost:5000/latest_block", {
+          const response = await fetch("http://192.168.29.228:5000/latest_block", {
             method: "GET",
             headers: { "Content-Type": "application/json" },
           });
@@ -154,7 +154,7 @@
         try {
           loader.style.display = "block"; // Show loader
 
-          const response = await fetch("http://localhost:5000/get_data", {
+          const response = await fetch("http://192.168.29.228:5000/get_data", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tx_hash: txHash }),
