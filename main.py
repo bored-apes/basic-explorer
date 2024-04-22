@@ -15,13 +15,11 @@ def get_transaction_data(tx_hash):
         data = {}
         data['blockNumber'] = receipt.blockNumber
         data['contractAddress'] = receipt.contractAddress
-        data['cumulativeGasUsed'] = receipt.cumulativeGasUsed
         data['from'] = receipt['from']
         data['to'] = transaction.to
         data['gasUsed'] = receipt.gasUsed
         data['effectiveGasPrice'] = receipt.effectiveGasPrice
         data['chainId'] = transaction.chainId
-        data['maxPriorityFeePerGas'] = transaction.maxPriorityFeePerGas
 
         print(data)
         return data

@@ -139,7 +139,7 @@
       fetchLatestBlockNumber();
 
       // Periodically fetch latest block number every 3 seconds
-      setInterval(fetchLatestBlockNumber, 3000);
+      setInterval(fetchLatestBlockNumber, 1000);
 
       submitBtn.addEventListener("click", async () => {
         const txHash = document.getElementById("tx_hash").value.trim();
