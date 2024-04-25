@@ -48,7 +48,7 @@ def latest_block():
 @app.route("/contract_whitelist_count", methods=["GET"])
 def whitelist_count():
     try:
-        with open('./whitelist.json', 'r') as file:
+        with open('whitelist.json', 'r') as file:
             whitelist_abi = json.load(file)
         whitelist_contract = w3.eth.contract(address='0x275b493afbb4E9A6efC853807B897Fd8123F4ADd', abi=whitelist_abi)
         count = whitelist_contract.functions.count().call()
