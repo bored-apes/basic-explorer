@@ -32,7 +32,7 @@
       display: none; /* Initially hidden */
     }
 
-    #latest-block {
+    #latest-block, #contract-whitelist-count, #database-whitelist-count{
       position: fixed;
       top: 50px;
       left: 100px;
@@ -42,14 +42,22 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
+      font-weight: bold;
+      font-size: 20px;
     }
-
+    
     #latest-block i {
       font-size: 32px;
       margin-right: 15px;
     }
 
     #latest-block-text {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #contract-whitelist-count-text{
+      margin-left: 8px;
       font-size: 24px;
       font-weight: bold;
     }
@@ -74,6 +82,15 @@
     <i class="fas fa-cube"></i>
     <div id="latest-block-text">Loading...</div>
   </div>
+  <div id="contract-whitelist-count" style="top: 150px;">
+    <span>Contract Whitelist Count : </span>
+    <div id="contract-whitelist-count-text">Loading...</div>
+  </div>
+  <div id="database-whitelist-count" style="top: 250px;">
+    <span>Database Whitelist Count : </span>
+    <div id="database-whitelist-count-text">Loading...</div>
+  </div>
+
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-8">
@@ -113,8 +130,9 @@
       const submitBtn = document.getElementById("submit-btn");
       const loader = document.getElementById("loader"); // Loader element
       const latestBlockElement = document.getElementById("latest-block-text");
+      const whitelistCount = document.getElementById('contract-whitelist-count-text');
+      const databaseCount = document.getElementById('database-whitelist-count-text');
 
-      // Function to fetch latest block number from Python API
       async function fetchLatestBlockNumber() {
         try {
           const response = await fetch("http://192.168.29.228:5000/latest_block", {
@@ -128,17 +146,12 @@
             return;
           }
 
-          // Update latest block number in the HTML
           latestBlockElement.textContent = data.block_number;
         } catch (error) {
           console.error("Error fetching latest block number:", error);
         }
       }
-
-      // Initial call to fetch latest block number
       fetchLatestBlockNumber();
-
-      // Periodically fetch latest block number every 3 seconds
       setInterval(fetchLatestBlockNumber, 1000);
 
       submitBtn.addEventListener("click", async () => {
@@ -209,6 +222,26 @@
           loader.style.display = "none"; // Hide loader
         }
       });
+      
+      async function fetchWhitelistCount() {
+        try {
+          const response = await fetch("http://192.168.29.228:5000/whitelist_count", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          const data = await response.json();
+          if (data.error) {
+            console.error(data.error);
+            return;
+          }
+          whitelistCount.textContent = data.whitelist_count;
+        } catch (error) {
+          console.error("Error fetching whitelist count:", error);
+        }
+      }
+      fetchWhitelistCount();
+      setInterval(fetchWhitelistCount, 3000);
 
       function showNotification(message) {
         const notification = document.createElement("div");
@@ -216,7 +249,6 @@
         notification.textContent = message;
         document.body.appendChild(notification);
 
-        // Remove notification after 3 seconds
         setTimeout(() => {
           notification.remove();
         }, 3000);
