@@ -56,7 +56,7 @@
       font-weight: bold;
     }
 
-    #contract-whitelist-count-text{
+    #contract-whitelist-count-text, #database-whitelist-count-text{
       margin-left: 8px;
       font-size: 24px;
       font-weight: bold;
@@ -83,7 +83,7 @@
     <div id="latest-block-text">Loading...</div>
   </div>
   <div id="contract-whitelist-count" style="top: 150px;">
-    <span>Contract Whitelist Count : </span>
+    <span>Contracts Whitelist Count : </span>
     <div id="contract-whitelist-count-text">Loading...</div>
   </div>
   <div id="database-whitelist-count" style="top: 250px;">
@@ -223,9 +223,9 @@
         }
       });
       
-      async function fetchWhitelistCount() {
+      async function fetchContractWhitelistCount() {
         try {
-          const response = await fetch("http://192.168.29.228:5000/whitelist_count", {
+          const response = await fetch("http://192.168.29.228:5000/contract_whitelist_count", {
             method: "GET",
             headers: { "Content-Type": "application/json" },
           });
@@ -240,8 +240,29 @@
           console.error("Error fetching whitelist count:", error);
         }
       }
-      fetchWhitelistCount();
-      setInterval(fetchWhitelistCount, 3000);
+      fetchContractWhitelistCount();
+      setInterval(fetchContractWhitelistCount, 60000);
+
+      async function fetchDatabaseWhitelistCount() {
+      try {
+          const response = await fetch("http://192.168.29.228:5000/database_whitelist_count", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          const data = await response.json();
+          if (data.error) {
+            console.error(data.error);
+            return;
+          }
+          databaseCount.textContent = data.whitelist_count - 1;
+        } catch (error) {
+          console.error("Error fetching database whitelist count:", error);
+        }
+      }
+      fetchDatabaseWhitelistCount();
+      setInterval(fetchDatabaseWhitelistCount, 60000);
+
 
       function showNotification(message) {
         const notification = document.createElement("div");

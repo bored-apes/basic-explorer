@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from hexbytes import HexBytes
 from flask_cors import CORS
 from web3 import Web3
+import psycopg2
 
 from main import get_transaction_data  # Import the function
 
@@ -44,7 +45,7 @@ def latest_block():
         print(f"Error fetching latest block number: {e}")
         return jsonify({"error": "Failed to fetch latest block number"}), 500
 
-@app.route("/whitelist_count", methods=["GET"])
+@app.route("/contract_whitelist_count", methods=["GET"])
 def whitelist_count():
     try:
         with open('./whitelist.json', 'r') as file:
@@ -55,6 +56,27 @@ def whitelist_count():
     except Exception as e:
         print(f"Error fetching latest whitelist count: {e}")
         return jsonify({"error": "Failed to fetch whitelist count"}), 500
+
+
+DATABASE_URI = "postgresql://db_owner:6TA9ZIaxstfw@ep-delicate-darkness-a171tmzs.ap-southeast-1.aws.neon.tech/mainnet?sslmode=require"
+
+
+@app.route('/database_whitelist_count', methods=['GET'])
+def get_database_whitelist_count():
+    try:
+        conn = psycopg2.connect(DATABASE_URI)
+        cur = conn.cursor()
+
+        # Execute SQL query to count rows in members table
+        cur.execute("SELECT COUNT(*) FROM members")
+        count = cur.fetchone()[0]
+
+        cur.close()
+        conn.close()
+
+        return jsonify({'whitelist_count': count})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)  # Set debug=False for production
