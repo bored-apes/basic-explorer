@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const databaseCount = document.getElementById(
     "database-whitelist-count-text"
   );
-  let isEqual;
+  let prevDiff;
   async function fetchLatestBlockNumber() {
     try {
       const response = await fetch("http://192.168.29.228:5000/latest_block", {
@@ -146,32 +146,34 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(fetchDatabaseWhitelistCount, 60000);
 
   async function sendTelegramBotMessage() {
-    if (whitelistCount.textContent != databaseCount.textContent && !isEqual) {
-      try {
-        const response = await fetch(
-          "http://192.168.29.228:5000/telegram_bot",
-          {
+    diff = whitelistCount.textContent-databaseCount.textContent;    
+    if (whitelistCount.textContent != databaseCount.textContent && diff!=prevDiff) {
+        try {
+            const response = await fetch(
+                "http://192.168.29.228:5000/telegram_bot",
+                {
             method: "GET",
             headers: { "Content-Type": "application/json" },
           }
         );
-
+        
         const data = await response.json();
-        isEqual = data.message_sent;
         if (data.error) {
-          console.error(data.error);
-          return;
+            console.error(data.error);
+            return;
         }
+        prevDiff = diff;
       } catch (error) {
         console.error("Error sending message from telegram bot:", error);
       }
     } else if (whitelistCount.textContent == databaseCount.textContent) {
-      isEqual = false;
+      prevDiff = 0;
+      diff = 0;
     }
   }
 
   sendTelegramBotMessage();
-  setInterval(sendTelegramBotMessage, 1000);
+  setInterval(sendTelegramBotMessage, 10000);
 
   function showNotification(message) {
     const notification = document.createElement("div");
