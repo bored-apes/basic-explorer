@@ -1,102 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bored Ape</title>
   <link rel="icon" type="image/png" href="boredape.png">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #4caf50;
-      color: white;
-      padding: 15px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 2s linear infinite;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: none; /* Initially hidden */
-    }
-
-    #latest-block, #contract-whitelist-count, #database-whitelist-count{
-      position: fixed;
-      top: 50px;
-      left: 100px;
-      padding: 15px;
-      background-color: #f8f9fa;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      font-weight: bold;
-      font-size: 20px;
-    }
-    
-    #latest-block i {
-      font-size: 32px;
-      margin-right: 15px;
-    }
-
-    #latest-block-text {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    #contract-whitelist-count-text, #database-whitelist-count-text{
-      margin-left: 8px;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Adjust input box width */
-    #tx_hash {
-      width: calc(100% - 100px); /* Adjust width as needed */
-    }
-  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="latest-block">
-    <i class="fas fa-cube"></i>
-    <div id="latest-block-text">Loading...</div>
-  </div>
-  <div id="contract-whitelist-count" style="top: 150px;">
-    <span>Contracts Whitelist Count : </span>
-    <div id="contract-whitelist-count-text">Loading...</div>
-  </div>
-  <div id="database-whitelist-count" style="top: 250px;">
-    <span>Database Whitelist Count : </span>
-    <div id="database-whitelist-count-text">Loading...</div>
-  </div>
-
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
+  <div class="container-fluid">
+    <div id="latest-block" class="row">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-center align-items-center">
+          <i class="fas fa-cube"></i>
+          <div id="latest-block-text">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div id="contract-whitelist-count" class="row mt-3">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-center align-items-center">
+          <span>Contracts Whitelist Count : </span>
+          <div id="contract-whitelist-count-text">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div id="database-whitelist-count" class="row mt-3">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-center align-items-center">
+          <span>Database Whitelist Count : </span>
+          <div id="database-whitelist-count-text">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-12">
         <div class="input-group">
-          <input type="text" class="form-control" id="tx_hash" placeholder="Enter transaction hash" />
+          <input type="text" class="form-control" id="tx_hash" placeholder="Enter transaction hash">
           <div class="input-group-append">
             <button id="submit-btn" class="btn btn-primary">
               <i class="fa fa-search"></i> Search
@@ -110,7 +53,7 @@
         <div id="data-container">
           <div id="loader" class="loader"></div>
           <!-- Loader element -->
-          <table class="table">
+          <table class="table table-bordered">
             <thead>
               <tr>
                 <th>Key</th>
@@ -126,156 +69,5 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const submitBtn = document.getElementById("submit-btn");
-      const loader = document.getElementById("loader"); // Loader element
-      const latestBlockElement = document.getElementById("latest-block-text");
-      const whitelistCount = document.getElementById('contract-whitelist-count-text');
-      const databaseCount = document.getElementById('database-whitelist-count-text');
-
-      async function fetchLatestBlockNumber() {
-        try {
-          const response = await fetch("http://192.168.29.228:5000/latest_block", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          });
-
-          const data = await response.json();
-          if (data.error) {
-            console.error(data.error);
-            return;
-          }
-
-          latestBlockElement.textContent = data.block_number;
-        } catch (error) {
-          console.error("Error fetching latest block number:", error);
-        }
-      }
-      fetchLatestBlockNumber();
-      setInterval(fetchLatestBlockNumber, 1000);
-
-      submitBtn.addEventListener("click", async () => {
-        const txHash = document.getElementById("tx_hash").value.trim();
-        if (!txHash) {
-          alert("Please enter a transaction hash.");
-          return;
-        }
-
-        const tableBody = document.getElementById("transaction-table");
-        tableBody.innerHTML = ""; // Clear previous data
-
-        try {
-          loader.style.display = "block"; // Show loader
-
-          const response = await fetch("http://192.168.29.228:5000/get_data", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tx_hash: txHash }),
-          });
-
-          const data = await response.json();
-          if (data.error) {
-            alert(data.error);
-            return;
-          }
-
-          // Add transaction hash row with copy button
-          const txHashRow = `
-            <tr>
-              <td>Transaction Hash</td>
-              <td>${txHash}</td>
-              <td><button class="btn btn-sm btn-info copy-button" data-value="${txHash}"><i class="far fa-copy"></i></button></td>
-            </tr>`;
-          tableBody.insertAdjacentHTML("beforeend", txHashRow);
-
-          // Process and display the retrieved data in the table
-          for (const [key, value] of Object.entries(data)) {
-            const row = `
-              <tr>
-                <td>${key}</td>
-                <td>${value}</td>
-                <td><button class="btn btn-sm btn-info copy-button" data-value="${value}"><i class="far fa-copy"></i></button></td>
-              </tr>`;
-            tableBody.insertAdjacentHTML("beforeend", row);
-          }
-
-          // Add event listeners to copy buttons
-          const copyButtons = document.querySelectorAll(".copy-button");
-          copyButtons.forEach((button) => {
-            button.addEventListener("click", () => {
-              const valueToCopy = button.getAttribute("data-value");
-              navigator.clipboard
-                .writeText(valueToCopy)
-                .then(() => {
-                  // Display toast notification
-                  showNotification("Copied to clipboard");
-                })
-                .catch((err) => {
-                  console.error("Failed to copy:", err);
-                });
-            });
-          });
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          alert("Failed to retrieve transaction data.");
-        } finally {
-          loader.style.display = "none"; // Hide loader
-        }
-      });
-      
-      async function fetchContractWhitelistCount() {
-        try {
-          const response = await fetch("http://192.168.29.228:5000/contract_whitelist_count", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          });
-
-          const data = await response.json();
-          if (data.error) {
-            console.error(data.error);
-            return;
-          }
-          whitelistCount.textContent = data.whitelist_count;
-        } catch (error) {
-          console.error("Error fetching whitelist count:", error);
-        }
-      }
-      fetchContractWhitelistCount();
-      setInterval(fetchContractWhitelistCount, 60000);
-
-      async function fetchDatabaseWhitelistCount() {
-      try {
-          const response = await fetch("http://192.168.29.228:5000/database_whitelist_count", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          });
-
-          const data = await response.json();
-          if (data.error) {
-            console.error(data.error);
-            return;
-          }
-          databaseCount.textContent = data.whitelist_count - 1;
-        } catch (error) {
-          console.error("Error fetching database whitelist count:", error);
-        }
-      }
-      fetchDatabaseWhitelistCount();
-      setInterval(fetchDatabaseWhitelistCount, 60000);
-
-
-      function showNotification(message) {
-        const notification = document.createElement("div");
-        notification.classList.add("notification");
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-          notification.remove();
-        }, 3000);
-      }
-    });
-  </script>
 </body>
 </html>

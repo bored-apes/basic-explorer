@@ -1,0 +1,89 @@
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 2s linear infinite;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none; /* Initially hidden */
+}
+
+#latest-block, #contract-whitelist-count, #database-whitelist-count{
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#latest-block i {
+  font-size: 32px;
+  margin-right: 15px;
+}
+
+#latest-block-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#contract-whitelist-count-text, #database-whitelist-count-text{
+  margin-left: 8px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Adjust input box width */
+#tx_hash {
+  width: calc(100% - 100px); /* Adjust width as needed */
+}
+
+/* Additional Styles for better UI */
+body {
+  background-color: #f8f9fa;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.input-group-append {
+  cursor: pointer;
+}
+
+.table {
+  background-color: #fff;
+}

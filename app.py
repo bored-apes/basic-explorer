@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from flask import Flask, request, jsonify
@@ -7,12 +8,14 @@ from web3 import Web3
 import psycopg2
 
 from main import get_transaction_data  # Import the function
+import telegram_msg_sender as tbot
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow CORS for all origins
 
 RPC_URL = "https://rpc.escscan.com"  # Replace with your desired RPC URL
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
+
 
 @app.route("/get_data", methods=["POST"])
 def get_data():
@@ -36,6 +39,7 @@ def get_data():
         print(f"Error processing request: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+
 @app.route("/latest_block", methods=["GET"])
 def latest_block():
     try:
@@ -44,6 +48,7 @@ def latest_block():
     except Exception as e:
         print(f"Error fetching latest block number: {e}")
         return jsonify({"error": "Failed to fetch latest block number"}), 500
+
 
 @app.route("/contract_whitelist_count", methods=["GET"])
 def whitelist_count():
@@ -77,6 +82,17 @@ def get_database_whitelist_count():
         return jsonify({'whitelist_count': count})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+
+@app.route("/telegram_bot", methods=["GET"])
+def send_message():
+    try:
+        asyncio.run(tbot.send_message(chat_id=913338915, message="Txn Mismatch Found...."))
+        return jsonify({'message_sent' : True})
+    except Exception as e:
+        print(f"Error sending message from telegram: {e}")
+        return jsonify({"error": "Failed to send message from telegram"}), 500
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)  # Set debug=False for production
