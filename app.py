@@ -87,7 +87,7 @@ def get_database_whitelist_count():
 @app.route("/telegram_bot", methods=["GET"])
 def send_message():
     try:
-        asyncio.run(tbot.send_message(chat_id=913338915, message="Txn Mismatch Found...."))
+        asyncio.run(tbot.send_message(chat_id=-4002790376, message="Txn Mismatch Found...."))
         return jsonify({'message_sent' : True})
     except Exception as e:
         print(f"Error sending message from telegram: {e}")
