@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const databaseCount = document.getElementById(
     "database-whitelist-count-text"
   );
-  let prevDiff;
   async function fetchLatestBlockNumber() {
     try {
       const response = await fetch("http://192.168.29.228:5000/latest_block", {
@@ -146,8 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(fetchDatabaseWhitelistCount, 60000);
 
   async function sendTelegramBotMessage() {
-    diff = whitelistCount.textContent-databaseCount.textContent;    
-    if (whitelistCount.textContent != databaseCount.textContent && diff!=prevDiff) {
+    if (whitelistCount.textContent != databaseCount.textContent && databaseCount.textContent != 'Loading...' && whitelistCount.textContent != 'Loading...') {
         try {
             const response = await fetch(
                 "http://192.168.29.228:5000/telegram_bot",
@@ -162,18 +160,14 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(data.error);
             return;
         }
-        prevDiff = diff;
       } catch (error) {
         console.error("Error sending message from telegram bot:", error);
       }
-    } else if (whitelistCount.textContent == databaseCount.textContent) {
-      prevDiff = 0;
-      diff = 0;
     }
   }
 
   sendTelegramBotMessage();
-  setInterval(sendTelegramBotMessage, 10000);
+  setInterval(sendTelegramBotMessage, 300000);
 
   function showNotification(message) {
     const notification = document.createElement("div");
