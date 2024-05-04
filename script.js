@@ -146,22 +146,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function sendTelegramBotMessage() {
     if (whitelistCount.textContent != databaseCount.textContent && databaseCount.textContent != 'Loading...' && whitelistCount.textContent != 'Loading...') {
-        try {
-            const response = await fetch(
-                "http://192.168.29.228:5000/telegram_bot",
-                {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
+      // wait for 60 seconds
+      await new Promise(resolve => setTimeout(resolve, 100000)); // 60 seconds = 60000 milliseconds
+
+    fetchDatabaseWhitelistCount();
+      if(whitelistCount.textContent != databaseCount.textContent && databaseCount.textContent != 'Loading...' && whitelistCount.textContent != 'Loading...'){
+          try {
+              const response = await fetch(
+                  "http://192.168.29.228:5000/telegram_bot",
+                  {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          
+          const data = await response.json();
+          if (data.error) {
+              console.error(data.error);
+              return;
           }
-        );
-        
-        const data = await response.json();
-        if (data.error) {
-            console.error(data.error);
-            return;
+        } catch (error) {
+          console.error("Error sending message from telegram bot:", error);
         }
-      } catch (error) {
-        console.error("Error sending message from telegram bot:", error);
       }
     }
   }
