@@ -2,12 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitBtn = document.getElementById("submit-btn");
   const loader = document.getElementById("loader"); // Loader element
   const latestBlockElement = document.getElementById("latest-block-text");
-  const whitelistCount = document.getElementById(
-    "contract-whitelist-count-text"
-  );
-  const databaseCount = document.getElementById(
-    "database-whitelist-count-text"
-  );
+  const whitelistCount = document.getElementById("contract-whitelist-count-text");
+  const databaseCount = document.getElementById("database-whitelist-count-text");
+  const claimedLP = document.getElementById("total-claimed-lp-text");
   async function fetchLatestBlockNumber() {
     try {
       const response = await fetch("http://192.168.29.228:5000/latest_block", {
@@ -174,6 +171,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   sendTelegramBotMessage();
   setInterval(sendTelegramBotMessage, 300000);
+
+  async function fetchTotalClaimedLP() {
+    try {
+      const response = await fetch(
+        "http://192.168.29.228:5000/total_claimed_lp",
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = await response.json();
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+      claimedLP.textContent = (data.total_claimed/1e18).toFixed(6);
+    } catch (error) {
+      console.error("Error fetching claimed LP:", error);
+    }
+  }
+  fetchTotalClaimedLP();
+  setInterval(fetchTotalClaimedLP, 60000);
+
+
 
   function showNotification(message) {
     const notification = document.createElement("div");

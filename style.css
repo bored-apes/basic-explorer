@@ -24,7 +24,7 @@
   display: none; /* Initially hidden */
 }
 
-#latest-block, #contract-whitelist-count, #database-whitelist-count{
+#latest-block, #contract-whitelist-count, #database-whitelist-count, #total-claimed-lp{
   padding: 15px;
   background-color: #f8f9fa;
   border-radius: 10px;
@@ -40,12 +40,13 @@
   margin-right: 15px;
 }
 
-#latest-block-text {
+#latest-block-text{
   font-size: 24px;
   font-weight: bold;
 }
 
-#contract-whitelist-count-text, #database-whitelist-count-text{
+
+#contract-whitelist-count-text, #database-whitelist-count-text, #total-claimed-lp-text{
   margin-left: 8px;
   font-size: 24px;
   font-weight: bold;

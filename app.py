@@ -13,7 +13,7 @@ import telegram_msg_sender as tbot
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow CORS for all origins
 
-RPC_URL = "https://rpc.escscan.com"  # Replace with your desired RPC URL
+RPC_URL = "https://rpc-testnet.escscan.com"  # Replace with your desired RPC URL
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
 
@@ -50,12 +50,15 @@ def latest_block():
         return jsonify({"error": "Failed to fetch latest block number"}), 500
 
 
+web3 = Web3(Web3.HTTPProvider('https://rpc.escscan.com'))
+
+
 @app.route("/contract_whitelist_count", methods=["GET"])
 def whitelist_count():
     try:
         with open('whitelist.json', 'r') as file:
             whitelist_abi = json.load(file)
-        whitelist_contract = w3.eth.contract(address='0x275b493afbb4E9A6efC853807B897Fd8123F4ADd', abi=whitelist_abi)
+        whitelist_contract = web3.eth.contract(address='0x9D0b3C95dfc5D6913679E9D3B11Cc3A294a35a6B', abi=whitelist_abi)
         count = whitelist_contract.functions.count().call()
         return jsonify({"whitelist_count": count})
     except Exception as e:
@@ -92,6 +95,20 @@ def send_message():
     except Exception as e:
         print(f"Error sending message from telegram: {e}")
         return jsonify({"error": "Failed to send message from telegram"}), 500
+
+
+web3_bsc = Web3(Web3.HTTPProvider('https://bsc-dataseed1.binance.org/'))
+@app.route("/total_claimed_lp", methods=["GET"])
+def get_total_claimed_lp():
+    try:
+        with open('tempLP.json', 'r') as file:
+            tempLPAbi = json.load(file)
+        tempLPContract = web3_bsc.eth.contract(address='0x581E080513d628FD1e0Fb396a5744418d78c624F', abi=tempLPAbi)
+        count = tempLPContract.functions.totalClaimed().call()
+        return jsonify({"total_claimed": count})
+    except Exception as e:
+        print(f"Error fetching latest total claimed: {e}")
+        return jsonify({"error": "Failed to fetch total claimed"}), 500
 
 
 if __name__ == "__main__":

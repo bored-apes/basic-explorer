@@ -4,7 +4,7 @@ import json
 
 
 def get_transaction_data(tx_hash):
-    RPC_URL = "https://rpc.escscan.com"  # Replace with your desired RPC URL
+    RPC_URL = "https://rpc-testnet.escscan.com"  # Replace with your desired RPC URL
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
     try:
         transaction = w3.eth.get_transaction(tx_hash)
